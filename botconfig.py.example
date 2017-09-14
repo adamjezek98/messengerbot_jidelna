@@ -1,0 +1,7 @@
+access_token = "YOUR_ACCESS_TOKEN"
+db_path = "/path/to/your/database.sqlite3"
+
+#certificates for httprequesthandler
+certfile='/etc/letsencrypt/archive/domain/cert.pem',
+keyfile='/etc/letsencrypt/archive/domain/privkey.pem',
+ca_certs='/etc/letsencrypt/archive/domain/chain.pem',
