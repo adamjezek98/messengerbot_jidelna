@@ -8,7 +8,7 @@ import sender
 import send_menu
 import os
 
-os.chdir("/home/adam/messenger")
+os.chdir(botconfig.home_folder)
 
 def send_welcome(user_id):
     sender.send(sender.get_message_button_template(user_id,

@@ -7,8 +7,9 @@ import PyPDF2
 import os
 import re
 import sqlite3
-os.chdir("/home/adam/messenger")
-dbname = "database.sqlite3"
+import botconfig
+os.chdir(botconfig.home_folder)
+dbname = botconfig.db_path
 
 def get_links():
     pg = urllib.request.urlopen("http://www.gym-rce.cz/cz/o-skole/skolni-jidelna/jidelni-listek/")

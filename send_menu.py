@@ -6,7 +6,7 @@ import os
 import botconfig
 import sender
 
-os.chdir("/home/adam/messenger")
+os.chdir(botconfig.home_folder)
 
 
 

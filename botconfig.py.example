@@ -1,6 +1,8 @@
 access_token = "YOUR_ACCESS_TOKEN"
 db_path = "/path/to/your/database.sqlite3"
 
+home_folder = "/path/to/where/this/repository/is/saved"
+
 #certificates for httprequesthandler
 certfile='/etc/letsencrypt/archive/domain/cert.pem',
 keyfile='/etc/letsencrypt/archive/domain/privkey.pem',
