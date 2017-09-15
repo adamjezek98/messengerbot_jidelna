@@ -45,6 +45,8 @@ def publish_menu_to_page(days=2):
     menu = "Jídelníček na následující obědy:\n"
     for i in get_current_menu(days, True):
         menu += "V " + i[2] + " bude " + i[3] + "\n\n"
+    menu += "\nKompletní jídelníček najdete na adrese &link=http://ajezek.cz:8000/\n"
+
     sender.publish_post(menu)
 
 if __name__ == '__main__':
