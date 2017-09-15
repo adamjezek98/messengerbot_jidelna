@@ -58,7 +58,7 @@ def publish_post(text):
 
     print("=====SENDING=======")
     print(params)
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params)
+    r = requests.post("https://graph.facebook.com/155966168321102/feed", params=params)
     print("=====RESPONSE======")
     print(r.status_code)
     print(r.text)
