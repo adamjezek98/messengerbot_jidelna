@@ -52,7 +52,7 @@ def publish_menu_to_page(days=2):
 if __name__ == '__main__':
     if datetime.datetime.weekday(datetime.datetime.today()) not in (5,6):
         send_menu_to_all()
-    if datetime.datetime.weekday(datetime.datetime.today()) not in (4,5) & int(time.strftime("%H")) == 20:
+    if datetime.datetime.weekday(datetime.datetime.today()) not in (4,5) and int(time.strftime("%H")) == 20:
         publish_menu_to_page()
 
 
