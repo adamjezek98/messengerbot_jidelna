@@ -1,7 +1,7 @@
 import requests
 import botconfig
 import json
-access_token = botconfig.access_token
+access_token = botconfig.messenger_access_token
 
 def get_message_text_template(user_id, text):
     return {
@@ -50,4 +50,16 @@ def send_message(user_id, text):
     data = get_message_text_template(user_id,text)
 
     send(data)
+
+
+def publish_post(text):
+    params = {"access_token": botconfig.page_access_token,
+              "message":text}
+
+    print("=====SENDING=======")
+    print(params)
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params)
+    print("=====RESPONSE======")
+    print(r.status_code)
+    print(r.text)
 

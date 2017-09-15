@@ -1,4 +1,5 @@
-access_token = "YOUR_ACCESS_TOKEN"
+messenger_access_token = "APP_MESSENGER_ACCESS_TOKEN" #to send messages over messenger
+page_access_token = "PAGE_ACCESS_TOKEN" #to publish posts to page
 db_path = "/path/to/your/database.sqlite3"
 
 home_folder = "/path/to/where/this/repository/is/saved"
