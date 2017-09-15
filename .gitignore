@@ -1,5 +1,7 @@
-jidelnicky/*
-temp/*
+/jidelnicky/*
+/temp/*
 /botconfig.py
 /database.sqlite3
 /.idea
+/__pycache__/*
+*.pem
