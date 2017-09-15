@@ -11,18 +11,18 @@ os.chdir(botconfig.home_folder)
 
 
 
-def get_current_menu():
+def get_current_menu(days=2):
     db =sqlite3.connect(botconfig.db_path)
     c = db.cursor()
     date = datetime.date.today().strftime("%Y-%m-%d")
     if int(time.strftime("%H")) > 15:
-        c.execute("select * from foods where date > julianday(?) order by date limit 2",([date]))
+        c.execute("select * from foods where date > julianday(?) order by date limit ?",([date,days]))
     else:
-        c.execute("select * from foods where date >= julianday(?) order by date limit 2",([date]))
+        c.execute("select * from foods where date >= julianday(?) order by date limit ?",([date,days]))
 
     res  = ""
     for i in c.fetchall():
-        res += i[2] + ":\n"+i[3]+"\n"
+        res += i[2] + ":\n"+i[3]+"\n\n"
     return res
 
 def send_menu_to_all():
@@ -35,9 +35,10 @@ def send_menu_to_all():
         for user in c.fetchall():
             sender.send_message(user[0],res)
 
-def send_menu_to_one(userid):
-    res = get_current_menu()
+def send_menu_to_one(userid,days=5):
+    res = get_current_menu(days)
     sender.send_message(userid, res)
 
 if __name__ == '__main__':
-    send_menu_to_all()
+    if datetime.datetime.weekday(datetime.datetime.today()) not in (5,6):
+        send_menu_to_all()

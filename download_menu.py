@@ -40,7 +40,7 @@ replaces = OrderedDict([("ì","ě"),
 def process_pdfs():
     for f in os.listdir("temp"):
         filename = "temp/"+f
-        print(filename)
+        #print(filename)
         pdf_file = open(filename,"rb")
         rpdf = PyPDF2.PdfFileReader(pdf_file)
         txt = rpdf.getPage(0).extractText()
@@ -51,14 +51,14 @@ def process_pdfs():
         week = txt.split("oddoPondělí")[0]
         body = txt.split(week+"oddo")[-1]
         week = week[0:10]+"-"+week[10:]
-        print(week)
+        #print(week)
 
         body = body.split("Seznam alergenů")[0].replace("obsahuje alergeny: ","")
         #print(body)
 
         days = body.split("Oběd")
         al_chars = "1234567890,abcde"
-        print("")
+        #print("")
         for day in days:
             #print(day)
             try:
@@ -71,7 +71,7 @@ def process_pdfs():
                 continue
             date_end = date_end.end()
             daydate = day[0:date_end]
-            print(daydate)
+            #print(daydate)
             date = daydate.split(" ")[-1]
             #print(date)
             d = day [date_end:]
@@ -87,7 +87,7 @@ def process_pdfs():
             meal = "Pol.:\t" + meals[0] +"\nOběd:\t"+meals[1]
             #print(meal)
             write_to_db(date,daydate,meal)
-            print("")
+            #print("")
         os.rename(filename,"jidelnicky/"+week+".pdf")
 
 def write_to_db(date, daydate, meal):
@@ -101,14 +101,15 @@ def write_to_db(date, daydate, meal):
     date = date[2] + "-" + date[1] + "-" + date[0]
     c.execute("select * from foods where date=julianday(?)",([date]))
     res = c.fetchall()
-    print(date,daydate,meal)
+    #print(date,daydate,meal)
     if not res:
         c.execute("INSERT INTO foods VALUES(NULL,julianday(?),?,?)",(date,daydate,meal))
-        print(date,daydate,meal)
+        #print(date,daydate,meal)
         db.commit()
         db.close()
     else:
-        print("already in db",date,daydate,meal)
+        #print("already in db",date,daydate,meal)
+        pass
 
 
 #print(get_links())
