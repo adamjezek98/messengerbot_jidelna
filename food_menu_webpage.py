@@ -12,7 +12,17 @@ class WebHandler(http.server.SimpleHTTPRequestHandler):
 
 
     def do_GET(self):
-        result = "<meta charset='UTF-8'><h1>Jídelní lístek</h1><br/>"  # <h2>Školní jídelna Gymázium Roudnice nad Labem<h2/>"
+        result = """
+        <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head><meta charset='UTF-8'>
+        <meta property="og:url"                content="http://ajezek.cz:8000" />
+        <meta property="og:type"               content="article" />
+        <meta property="og:title"              content="Jídelní lístek" />
+        <meta property="og:description"        content="Školní jídelna Gymnázium Roudnice" />
+        <meta property="og:image"              content="https://ajezek.cz/images/icon_jidelna.png" />
+        </head><body>
+        <h1>Jídelní lístek</h1><br/>"""  # <h2>Školní jídelna Gymázium Roudnice nad Labem<h2/>"
         db = sqlite3.connect("database.sqlite3")
         c = db.cursor()
         c.execute("SELECT * FROM foods WHERE date >= julianday(?) ORDER BY date;",
@@ -20,7 +30,10 @@ class WebHandler(http.server.SimpleHTTPRequestHandler):
         result += '<table style="text-align: left;" border="1">'
         for r in c.fetchall():
             result += "<tr><th>" + r[2] + "</th><th>" + r[3].replace("\n", "<br/>") + "</th></tr>"
-        result += "</table>"
+        result += """</table>
+        </body>
+        </html>
+"""
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
