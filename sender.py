@@ -1,6 +1,7 @@
 import requests
 import botconfig
 import json
+import datetime
 access_token = botconfig.messenger_access_token
 
 def get_message_text_template(user_id, text):
@@ -40,6 +41,7 @@ def send(body):
     params = {"access_token":access_token}
     headers = {"Content-Type": "application/json"}
     print("=====SENDING=======")
+    print(datetime.datetime.now().strftime("%d. %m. %Y   %H:%M:%S"))
     print(body, params, headers)
     r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=json.dumps(body))
     print("=====RESPONSE======")

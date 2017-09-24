@@ -36,6 +36,8 @@ class WebHandler(http.server.SimpleHTTPRequestHandler):
     #    return
     def do_POST(self):
         length = int(self.headers['content-length'])
+        print("====Webhook====")
+        print(datetime.datetime.now().strftime("%d. %m. %Y  %H:%M:%S"))
         print(self.path)
         data_string = str(self.rfile.read(length), "utf-8")
         print(data_string)
