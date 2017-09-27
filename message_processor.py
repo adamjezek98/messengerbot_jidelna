@@ -27,7 +27,7 @@ class MessageProcessor():
 
     def send_subscribe_time(self, user_id):
         sender.send(sender.get_message_button_template(user_id,
-                                                       "V kolik chceš poslat jídelníček na následující dva obědy?\nV 7 ráno, v 11 před obědem, nebo v ve 4 odpoledne?"
+                                                       "V kolik chceš poslat jídelníček na následující dva obědy?"
                                                        "\nTaké můžeš zvolit vlastní čas. Stačí napsat číslo v rozmezí 0-23",
                                                        [["7 ráno", "SUBSCRIBETIME7"],
                                                         ["11 dopoledne", "SUBSCRIBETIME11"],
