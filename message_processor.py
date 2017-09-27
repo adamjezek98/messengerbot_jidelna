@@ -31,7 +31,7 @@ class MessageProcessor():
                                                        "\nTaké můžeš zvolit vlastní čas. Stačí napsat číslo v rozmezí 0-23",
                                                        [["7 ráno", "SUBSCRIBETIME7"],
                                                         ["11 dopoledne", "SUBSCRIBETIME11"],
-                                                        ["4 odoledne", "SUBSCRIBETIME16"]]))
+                                                        ["4 odpoledne", "SUBSCRIBETIME16"]]))
 
     def send_custom_subscribe_time(self, time, user_id):
         sender.send(sender.get_message_button_template(user_id,
