@@ -43,13 +43,17 @@ class MessageProcessor():
         sender_id = message["sender"]["id"]
         self.c.execute("SELECT * FROM users WHERE userid=?", ([sender_id]))
         user = self.c.fetchone()
+        try:
+            message_text = message["message"]["text"]
+        except:
+            message_text = ""
+
         if user == None:  # nový uživatel
-            self.send_welcome(sender_id)
+            if message_text.lower() == "odebírat" or message_text.lower() == "odebirat":
+                self.fake_postback(sender_id, "SUBSCRIBE")
+            else: #uvitaci
+                self.send_welcome(sender_id)
         else:
-            try:
-                message_text = message["message"]["text"]
-            except:
-                message_text = ""
 
             if message_text.lower() == "ukaž aktuální" or message_text.lower() == "ukaz aktualni":
                 self.fake_postback(sender_id, "SENDCURRENT")
