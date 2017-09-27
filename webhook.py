@@ -7,29 +7,11 @@ import botconfig
 import sender
 import send_menu
 import os
+import message_processor
+
+MessProc = message_processor.MessageProcessor()
 
 os.chdir(botconfig.home_folder)
-
-def send_welcome(user_id):
-    sender.send(sender.get_message_button_template(user_id,
-                                                   "Ahoj!\nZde se můžeš podívat na aktuální jídelníček, nebo se přihlásit k jeho pravidelnému odběru",
-                                                   [["Odebírat", "SUBSCRIBE"], ["Ukaž aktuální", "SENDCURRENT"]]))
-
-
-def send_modify(user_id):
-    print("====", user_id)
-    sender.send(sender.get_message_button_template(user_id,
-                                                   "Potřebuješ něco?",
-                                                   [["Zrušit odběr", "CANCELSUBSCRIBE"], ["Změnit čas", "SUBSCRIBE"],
-                                                    ["Ukaž aktuální", "SENDCURRENT"]]))
-
-
-def send_subscribe_time(user_id):
-    sender.send(sender.get_message_button_template(user_id,
-                                                   "V kolik chceš poslat jídelníček na následující dva obědy?\nV 7 ráno, v 11 před obědem, nebo v ve 4 odpoledne?",
-                                                   [["7 ráno", "SUBSCRIBETIME7"], ["11 dopoledne", "SUBSCRIBETIME11"],
-                                                    ["4 odoledne", "SUBSCRIBETIME16"]]))
-
 
 class WebHandler(http.server.SimpleHTTPRequestHandler):
     # def log_message(self, format, *args):
@@ -55,37 +37,17 @@ class WebHandler(http.server.SimpleHTTPRequestHandler):
         except:
             pass
         if 1:
-            sender_id = j["entry"][0]["messaging"][0]["sender"]["id"]
-            c.execute("SELECT * FROM users WHERE userid=?", ([sender_id]))
-            user = c.fetchone()
+            #sender_id = j["entry"][0]["messaging"][0]["sender"]["id"]
+            #c.execute("SELECT * FROM users WHERE userid=?", ([sender_id]))
+            #user = c.fetchone()
             if "message" in j["entry"][0]["messaging"][0].keys():  # zprava
+
                 print("message")
-                if user == None:
-                    send_welcome(sender_id)
-                else:
-                    send_modify(sender_id)
+                MessProc.process_message(j["entry"][0]["messaging"][0])
+
             elif "postback" in j["entry"][0]["messaging"][0].keys():  # postback
                 print("payload")
-                payload = j["entry"][0]["messaging"][0]["postback"]["payload"]
-                if user == None and payload != "SENDCURRENT":
-                    c.execute("INSERT INTO users VALUES(NULL, ?, NULL, NULL)", ([sender_id]))
-                    db.commit()
-                if payload == "SUBSCRIBE":
-                    print("subscribe")
-                    send_subscribe_time(sender_id)
-                if payload.startswith("SUBSCRIBETIME"):
-                    print("subscribetime")
-                    t = payload.replace("SUBSCRIBETIME", "")
-                    c.execute("UPDATE users SET 'hournotify'=? WHERE userid=?", ([t, sender_id]))
-                    db.commit()
-                    sender.send_message(sender_id, "Nastaveno. Jídelníček by ti měl přijít vždy v " + t + " hodin.")
-                elif payload == "CANCELSUBSCRIBE":
-                    c.execute("DELETE FROM users WHERE userid=?", ([sender_id]))
-                    db.commit()
-                    sender.send_message(sender_id, "Zrušeno")
-                elif payload == "SENDCURRENT":
-                    print("SENDCURRENT")
-                    send_menu.send_menu_to_one(sender_id)
+                MessProc.process_postback(j["entry"][0]["messaging"][0])
 
         # for webhook verify uncomment
         result = " "  # get_array["hub.challenge"][0]
