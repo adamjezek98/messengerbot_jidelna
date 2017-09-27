@@ -1,6 +1,5 @@
 import sqlite3
-import datetime
-import json
+import time
 import botconfig
 import sender
 import send_menu
@@ -53,7 +52,11 @@ class MessageProcessor():
                 message_text = ""
 
             if message_text.lower() == "ukaž aktuální" or message_text.lower() == "ukaz aktualni":
-                send_menu.send_menu_to_one(sender_id)
+                self.fake_postback(sender_id, "SENDCURRENT")
+
+            elif message_text.lower() == "odebírat" or message_text.lower() == "odebirat":
+                self.fake_postback(sender_id, "SUBSCRIBE")
+
 
             elif message_text.isdigit():  # custom čas
                 if int(message_text) >= 0 and int(message_text) <= 23:
@@ -63,28 +66,36 @@ class MessageProcessor():
             else:  # klasická "Potřebuješ něco?"
                 self.send_modify(sender_id)
 
+    def fake_postback(self, userid, postback):
+        self.process_postback({"recipient": {"id": userid},
+                               "timestamp": int(time.time() * 1000),
+                               "sender": {"id": "1508122325941445"},
+                               "postback": {"payload": postback,
+                                            "title": "Ano"}}
+                              )
+
     def process_postback(self, postback):
         postback_type = postback["postback"]["payload"]
         sender_id = postback["sender"]["id"]
         self.c.execute("SELECT * FROM users WHERE userid=?", ([sender_id]))
         user = self.c.fetchone()
 
-        if user == None and postback_type in ("SUBSCRIBE"): #novy uzivatel
+        if user == None and postback_type in ("SUBSCRIBE", "SUBSCRIBETIME"):  # novy uzivatel
             self.c.execute("INSERT INTO users VALUES(NULL, ?, NULL, NULL)", ([sender_id]))
             self.db.commit()
 
-        elif postback_type == "SUBSCRIBE": #posli subscribe volbu
+        if postback_type == "SUBSCRIBE":  # posli subscribe volbu
             print("subscribe")
             self.send_subscribe_time(sender_id)
 
-        elif postback_type.startswith("SUBSCRIBETIME"): #nastaveni subscribe casu
+        elif postback_type.startswith("SUBSCRIBETIME"):  # nastaveni subscribe casu
             print("subscribetime")
             t = postback_type.replace("SUBSCRIBETIME", "")
             self.c.execute("UPDATE users SET 'hournotify'=? WHERE userid=?", ([t, sender_id]))
             self.db.commit()
             sender.send_message(sender_id, "Nastaveno. Jídelníček ti přijde vždy v " + t + " hodin.")
 
-        elif postback_type == "CANCELSUBSCRIBE": #zruseni odberu
+        elif postback_type == "CANCELSUBSCRIBE":  # zruseni odberu
             self.c.execute("DELETE FROM users WHERE userid=?", ([sender_id]))
             self.db.commit()
             sender.send_message(sender_id, "Zrušeno")
