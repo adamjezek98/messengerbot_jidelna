@@ -49,16 +49,16 @@ class MessageProcessor():
             message_text = ""
 
         if user == None:  # nový uživatel
-            if message_text.lower() == "odebírat" or message_text.lower() == "odebirat":
+            if message_text.lower().replace("í","i") == "odebirat":
                 self.fake_postback(sender_id, "SUBSCRIBE")
             else: #uvitaci
                 self.send_welcome(sender_id)
         else:
 
-            if message_text.lower() == "ukaž aktuální" or message_text.lower() == "ukaz aktualni":
+            if message_text.lower().replace("ž","z").replace("á","a").replace("í","i") == "ukaz aktualni":
                 self.fake_postback(sender_id, "SENDCURRENT")
 
-            elif message_text.lower() == "odebírat" or message_text.lower() == "odebirat":
+            elif message_text.lower().replace("í","i") == "odebirat":
                 self.fake_postback(sender_id, "SUBSCRIBE")
 
 
