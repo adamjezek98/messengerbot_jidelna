@@ -17,8 +17,8 @@ class WebHandler(http.server.SimpleHTTPRequestHandler):
     # def log_message(self, format, *args):
     #    return
     def do_POST(self):
+        print("===========Webhook==========")
         length = int(self.headers['content-length'])
-        print("====Webhook====")
         print(datetime.datetime.now().strftime("%d. %m. %Y  %H:%M:%S"))
         print(self.path)
         data_string = str(self.rfile.read(length), "utf-8")
@@ -26,6 +26,7 @@ class WebHandler(http.server.SimpleHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
+        print("=====headers_end======")
         j = json.loads(data_string)
         db = sqlite3.connect(botconfig.db_path)
         c = db.cursor()
@@ -49,13 +50,7 @@ class WebHandler(http.server.SimpleHTTPRequestHandler):
                 print("payload")
                 MessProc.process_postback(j["entry"][0]["messaging"][0])
 
-        # for webhook verify uncomment
-        result = " "  # get_array["hub.challenge"][0]
-
-        self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
-        self.wfile.write(bytes(str(result), "utf-8"))
+        print("==========processing DONE===============")
 
     def do_GET(self):
         result = "<meta charset='UTF-8'><h1>Jídelní lístek</h1><br/>"  # <h2>Školní jídelna Gymázium Roudnice nad Labem<h2/>"
@@ -79,4 +74,9 @@ server.socket = ssl.wrap_socket(server.socket,
                                 keyfile=botconfig.keyfile,
                                 ca_certs=botconfig.ca_certs,
                                 server_side=True)
-server.serve_forever()
+#server.serve_forever()
+while 1:
+    try:
+        server.handle_request()
+    except:
+        pass

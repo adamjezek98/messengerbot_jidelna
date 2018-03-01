@@ -28,7 +28,7 @@ def get_current_menu(days=2,rawreturn=False):
     return res
 
 def send_menu_to_all():
-    res = get_current_menu()
+    res = get_current_menu(days=3)
     if len(res) > 10:
         db = sqlite3.connect(botconfig.db_path)
         c = db.cursor()

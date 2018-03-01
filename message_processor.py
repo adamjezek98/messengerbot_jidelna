@@ -4,7 +4,7 @@ import botconfig
 import sender
 import send_menu
 import os
-
+import random
 os.chdir(botconfig.home_folder)
 
 
@@ -18,7 +18,7 @@ class MessageProcessor():
                                                        [["Odebírat", "SUBSCRIBE"], ["Ukaž aktuální", "SENDCURRENT"]]))
 
     def send_modify(self, user_id):
-        print("====", user_id)
+        #print("====", user_id)
         sender.send(sender.get_message_button_template(user_id,
                                                        "Potřebuješ něco?",
                                                        [["Zrušit odběr", "CANCELSUBSCRIBE"],
@@ -41,13 +41,29 @@ class MessageProcessor():
 
     def process_message(self, message):
         sender_id = message["sender"]["id"]
+        print("=======process_message=========")
         self.c.execute("SELECT * FROM users WHERE userid=?", ([sender_id]))
         user = self.c.fetchone()
         try:
             message_text = message["message"]["text"]
         except:
             message_text = ""
-
+            print("no text")
+            if "attachments" in message["message"].keys():
+                print("attachment")
+                for attach in message["message"]["attachments"]:
+                    print(attach)
+                    if attach["type"] == "image":
+                        print("maybe image")
+                        if "sticker_id" in attach["payload"].keys():
+                            print("sticker")
+                        else:
+                            #sender.send_message(sender_id, "imgreptest")
+                            img = random.choice(("rep1.gif", "rep2.gif", "bill.jpg", "rep1.jpg", "rep2.jpg"))
+                            sender.send_image(sender_id,
+                             "https://archive.ajezek.cz/jidelna/"+img)
+                            return
+        print(message_text, sender_id)
         if user == None:  # nový uživatel
             if message_text.lower().replace("í","i") == "odebirat":
                 self.fake_postback(sender_id, "SUBSCRIBE")
@@ -65,6 +81,10 @@ class MessageProcessor():
             elif message_text.isdigit():  # custom čas
                 if int(message_text) >= 0 and int(message_text) <= 23:
                     self.send_custom_subscribe_time(message_text, sender_id)
+            elif isintext(message_text, ("diky", "díky", "děkuju", "dekuju", "děkuji", "dekuji", "dik", "dík")):
+                dik = random.choice(("Nemusíš mi děkovat brouku :* <3","Nemáš zač ;)",":)","No sem úžasnej, žejo?","dik more"))
+                sender.send_message(sender_id, dik)
+                return
 
 
             else:  # klasická "Potřebuješ něco?"
@@ -73,7 +93,7 @@ class MessageProcessor():
     def fake_postback(self, userid, postback):
         self.process_postback({"recipient": {"id": userid},
                                "timestamp": int(time.time() * 1000),
-                               "sender": {"id": "1508122325941445"},
+                               "sender": {"id": userid},
                                "postback": {"payload": postback,
                                             "title": "Ano"}}
                               )
@@ -110,3 +130,9 @@ class MessageProcessor():
 
         elif postback_type == "IGNORE":
             sender.send_message(sender_id, "Ok, budu to ignorovat")
+
+def isintext(text, list):
+    for l in list:
+        if l.lower() in text.lower():
+            return True
+    return False
