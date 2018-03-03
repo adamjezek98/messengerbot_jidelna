@@ -8,6 +8,7 @@ import tools
 import user_manager
 import os
 import message_processor
+import collections
 
 from flask import Flask, request, render_template, redirect, session
 
@@ -69,7 +70,7 @@ def class_settings():
     if "user" not in session.keys():
         return render_template("login.html")
     if request.method == "GET":
-        classes = {}
+        classes = d = collections.OrderedDict()
         for c in tools.get_classes():
             classes[c] = tools.get_class_str(c)
         return render_template("class_settings.html", classes=classes,
