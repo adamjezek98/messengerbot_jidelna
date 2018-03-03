@@ -6,7 +6,7 @@
         <select name="sendtime">
             <option value="NULL">Vypnuto</option>
             {% for time in times %}
-            <option value="{{time}}" {% if time== selected %} selected {% endif %}>{{ time }}</option>
+            <option value="{{time}}" {% if time == selected %} selected {% endif %}>{{ time }}</option>
             {% endfor %}
         </select>
         <input type="submit" value="Uložit"/>

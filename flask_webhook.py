@@ -51,8 +51,12 @@ def food_settings():
     if "user" not in session.keys():
         return render_template("login.html")
     if request.method == "GET":
+        try:
+            selected = int(userManager.get_user_foodtime(session["user"]))
+        except:
+            selected = "NULL"
         return render_template("food_settings.html", times=list(range(24)),
-                               selected=userManager.get_user_foodtime(session["user"]))
+                               selected=selected)
     elif request.method == "POST":
         print(request.form["sendtime"])
         userManager.set_user_foodtime(session["user"], request.form["sendtime"])
