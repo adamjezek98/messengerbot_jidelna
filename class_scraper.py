@@ -95,18 +95,22 @@ class ClassScraper():
 
             olddate = None
             for row in self.c.fetchall():
-                date = datetime.strptime(row[1].split(" ")[0],"%Y-%m-%d")
+                date = datetime.strptime(row[1].split(" ")[0], "%Y-%m-%d")
                 supl = row[0]
                 if date != olddate:
                     olddate = date
                     print(date)
-                    text += "\n"+tools.get_cs_weekday(date).title() + " " + \
+                    text += "\n" + tools.get_cs_weekday(date).title() + " " + \
                             datetime.strftime(date, "%d.%m.") + " | " + classroom
-                text += "\n"+supl
-        sender.send_message(user_id, text)
+                text += "\n" + supl
+        if text:
+            sender.send_message(user_id, text)
+        else:
+            sender.send_message(user_id,
+                                "Zdá se, že tu nic není.\nBuď nemáte žádné suplování, a nebo nemáš nastavenou třídu")
 
 
 if __name__ == "__main__":
     classScraper = ClassScraper()
     classScraper.suplovani()
-    #classScraper.send_from_db(1508122325941445)
+    # classScraper.send_from_db(1508122325941445)
