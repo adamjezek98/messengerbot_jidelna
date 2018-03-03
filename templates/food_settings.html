@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block body %}
+<div>
+    <h2>Čas zasílání jídelníčku</h2>
+    <form method="post">
+        <select name="sendtime">
+            <option value="NULL">Vypnuto</option>
+            {% for time in times %}
+            <option value="{{time}}" {% if time== selected %} selected {% endif %}>{{ time }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Uložit"/>
+    </form>
+</div>
+{% endblock %}

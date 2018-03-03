@@ -69,11 +69,11 @@ class WebHandler(http.server.SimpleHTTPRequestHandler):
 
 
 server = http.server.HTTPServer(("0.0.0.0", 8080), WebHandler)
-server.socket = ssl.wrap_socket(server.socket,
-                                certfile=botconfig.certfile,
-                                keyfile=botconfig.keyfile,
-                                ca_certs=botconfig.ca_certs,
-                                server_side=True)
+#server.socket = ssl.wrap_socket(server.socket,
+#                                certfile=botconfig.certfile,
+#                                keyfile=botconfig.keyfile,
+#                                ca_certs=botconfig.ca_certs,
+#                                server_side=True)
 #server.serve_forever()
 while 1:
     try:

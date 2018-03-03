@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block body %}
+<div>
+    <h2>Třídy pro suplování</h2>
+    <form method="post">
+
+        {% for class in classes %}
+        <label>{{class}}</label>
+        <input type="checkbox" name="{{class}}" {% if class in checked %} checked {% endif %}>{{ time }}</input>
+        <br/>
+        {% endfor %}
+
+        <input type="submit" value="Uložit"/>
+    </form>
+</div>
+<p>Po přidání třídy bude pravděpodobně pár dní trvat, než začnete dostávat upozornění. Několikrát za den dojde ke
+    se zkontroluje vypsané suplování a odešle se pouze nově připsané/upravené. <br/> Pokud v době přidání již suplování
+    bylo vypsáno, nepřijde vám dokud se nezmění nebo dokud nepřibyde nové.</p>
+{% endblock %}
