@@ -6,9 +6,12 @@ import send_menu
 import os
 import random
 import user_manager
+import class_scraper
 
 os.chdir(botconfig.home_folder)
 userManager = user_manager.UserManager()
+classScraper = class_scraper.ClassScraper()
+
 
 class MessageProcessor():
     db = sqlite3.connect(botconfig.db_path)
@@ -24,8 +27,6 @@ class MessageProcessor():
                                                        (sender.get_postback_button("Ukaž jídelníček", "SENDCURRENT"),
                                                         sender.get_link_button("Nastavení",
                                                                                self.get_login_url(user_id)))))
-
-
 
     def send_whatyouneed(self, user_id):
         # print("====", user_id)
@@ -54,8 +55,8 @@ class MessageProcessor():
             if message_text.lower().replace("ž", "z").replace("á", "a").replace("í", "i") == "ukaz aktualni":
                 self.fake_postback(sender_id, "SENDCURRENT")
 
-            elif message_text.lower().replace("í", "i") == "odebirat":
-                self.fake_postback(sender_id, "SUBSCRIBE")
+            elif message_text.lower().replace("í", "i").replace("á", "a") == "suplovani":
+                self.fake_postback(sender_id, "SENDCLASS")
 
 
             elif message_text.isdigit():  # custom čas
@@ -89,6 +90,9 @@ class MessageProcessor():
             print("SENDCURRENT")
             send_menu.send_menu_to_one(sender_id)
 
+        elif postback_type == "SENDCLASS":
+            print("SENDCLASS")
+            classScraper.send_from_db(sender_id)
 
     def reply_image(self, sender_id, message):
         print("no text")
@@ -109,7 +113,7 @@ class MessageProcessor():
         return False
 
     def get_login_url(self, userId):
-        return "https://bot.ajezek.cz/login?uid=" + str(userId) + "&tk="+userManager.get_user_login(userId)
+        return "https://bot.ajezek.cz/login?uid=" + str(userId) + "&tk=" + userManager.get_user_login(userId)
 
 
 def isintext(text, list):

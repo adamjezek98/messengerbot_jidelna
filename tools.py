@@ -36,7 +36,7 @@ def get_class_from_str(c):
 
 
 def get_classes():
-    return ("prima", "sekunda", "tercie", "kvarta", "kvinta", "sexta", "septima", "oktáva",
+    return ("1.", "2.", "3.", "4.", "5.", "6.", "7.", "8.",
             "1.A", "1.B", "2.A", "2.B", "3.A", "3.B", "4.A", "4.B",)
 
 

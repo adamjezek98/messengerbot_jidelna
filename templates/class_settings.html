@@ -4,10 +4,10 @@
     <h2>Třídy pro suplování</h2>
     <form method="post">
 
-        {% for class in classes %}
-        <label>{{class}}</label>
+        {% for class in classes.keys() %}
+
         <input type="checkbox" name="{{class}}" {% if class in checked %} checked {% endif %}>{{ time }}</input>
-        <br/>
+        <label>{{classes[class]}}</label><br/>
         {% endfor %}
 
         <input type="submit" value="Uložit"/>

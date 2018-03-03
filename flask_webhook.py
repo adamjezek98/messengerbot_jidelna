@@ -63,7 +63,10 @@ def class_settings():
     if "user" not in session.keys():
         return render_template("login.html")
     if request.method == "GET":
-        return render_template("class_settings.html", classes = tools.get_classes(),
+        classes = {}
+        for c in tools.get_classes():
+            classes[c] = tools.get_class_str(c)
+        return render_template("class_settings.html", classes=classes,
                                checked=userManager.get_user_classes(session["user"]))
     elif request.method == "POST":
         userManager.set_user_classeys(session["user"], list(request.form.keys()))

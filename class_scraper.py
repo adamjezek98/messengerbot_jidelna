@@ -6,11 +6,14 @@ import botconfig
 import tools
 import copy
 import sender
+from structs import ClassRoomStruct, SuplStruct
 
-db = sqlite3.connect(botconfig.db_path)
-c = db.cursor()
 
 class ClassScraper():
+    def __init__(self):
+        self.db = sqlite3.connect(botconfig.db_path)
+        self.c = self.db.cursor()
+
     def get_html(self, url):
         f = urllib.request.urlopen(url)
         html = str(f.read(), "windows-1250")
@@ -68,7 +71,7 @@ class ClassScraper():
             if classroom.has_new:
                 print(classroom.date, classroom.classroom)
                 print(str(classroom))
-                self.send_new_supl(classroom.classroom,str(classroom))
+                self.send_new_supl(classroom.classroom, str(classroom))
 
     def get_td_p_or_none(self, node):
         n = node.xpath(".//p")
@@ -76,94 +79,34 @@ class ClassScraper():
             return n[0].text
         return None
 
-    def send_new_supl(self,classroom, text):
-        c.execute("SELECT userid FROM class_notify WHERE room=?",[classroom])
-        for user_id in c.fetchall():
+    def send_new_supl(self, classroom, text):
+        self.c.execute("SELECT userid FROM class_notify WHERE room=?", [classroom])
+        for user_id in self.c.fetchall():
             user_id = user_id[0]
             sender.send_message(user_id, text)
 
+    def send_from_db(self, user_id):
+        self.c.execute("SELECT room FROM class_notify WHERE userid = ?", [user_id])
+        text = ""
+        for r in self.c.fetchall():
+            classroom = r[0]
+            self.c.execute("SELECT shortStr, day FROM suplstructs WHERE (classroom=? AND day >= JULIANDAY('now'))",
+                           [classroom])
+
+            olddate = None
+            for row in self.c.fetchall():
+                date = datetime.strptime(row[1].split(" ")[0],"%Y-%m-%d")
+                supl = row[0]
+                if date != olddate:
+                    olddate = date
+                    print(date)
+                    text += "\n"+tools.get_cs_weekday(date).title() + " " + \
+                            datetime.strftime(date, "%d.%m.") + " | " + classroom
+                text += "\n"+supl
+        sender.send_message(user_id, text)
 
 
-class SuplStruct():
-    classroom = None
-    hour = None
-    subj = None
-    group = None
-    room = None
-    type = None
-    teacher = None
-    oldteacher = None
-    date = None
-
-    def __str__(self):
-        s = "Třída " + tools.get_class_str(self.classroom)
-        s += ", sk " + self.group if self.group else ""
-        s += (" nemá " if self.type == "odpadá" else " má ") + self.hour + ". hodinu "
-        s += self.subj if self.subj is not None else ""
-        s += " s " + self.teacher if self.teacher is not None else ""
-        s += " v " + self.room.replace("(", "").replace(")", "") if self.room is not None else ""
-        if (self.type != "odpadá"):
-            s += " místo " + str(self.oldteacher).replace("(", "").replace(")", "") if self.oldteacher else ""
-        s += " (" + self.type + ")"
-        return s
-
-    def get_short_str(self):
-        s = self.hour + ". hodinu "
-        if self.group is not None:
-            s += "skupina "+self.group
-            s += (" nemá " if self.type == "odpadá" or self.type == "přesun >>" else " má ")
-        else:
-            s +=(" nemáte " if self.type == "odpadá" or self.type == "přesun >>" else " máte ")
-        s += self.subj if self.subj is not None else ""
-        s += " s " + self.teacher if self.teacher is not None else ""
-        s += " v " + self.room.replace("(", "").replace(")", "") if self.room is not None else ""
-        if (self.type == "spojí" or self.type == "supluje"):
-            s += " místo " + str(self.oldteacher).replace("(", "").replace(")", "") if self.oldteacher else ""
-            s += " (" + self.type + ")"
-        elif "přesun" in self.type:
-            s += ", přesun " + str(self.oldteacher)
-
-        return s
-
-    def get_uid(self):
-        uid = str(self.classroom) + ":"
-        uid += str(self.hour) + ":"
-        uid += str(self.subj) + ":"
-        uid += str(self.group) + ":"
-        uid += str(self.room) + ":"
-        uid += str(self.type) + ":"
-        uid += str(self.teacher) + ":"
-        uid += str(self.oldteacher) + ":"
-        uid += str(self.date)
-        return uid
-
-    def save_self_to_db_is_new(self):
-        try:
-            c.execute(
-                "INSERT INTO suplstructs(day, classroom, hour, subj, classgroup, room, type, teacher, oldteacher, UID) "
-                "VALUES (?,?,?,?,?,?,?,?,?,?)", (self.date, self.classroom, self.hour, self.subj, self.group, self.room,
-                                                 self.type, self.teacher, self.oldteacher, self.get_uid()))
-
-            db.commit()
-            return True
-        except sqlite3.IntegrityError:
-            return True
-
-
-class ClassRoomStruct():
-    suplStructs = []
-    classroom = None
-    date = None
-    has_new = False
-
-    def __str__(self):
-        s = tools.get_cs_weekday(self.date).title() + " " + datetime.strftime(self.date, "%d.%m.")
-        s += " | " + tools.get_class_str(self.classroom)
-        for supl in self.suplStructs:
-            s += "\n" + supl.get_short_str()
-            # s += "\n" +str(supl)
-        return s
-
-
-classScraper = ClassScraper()
-classScraper.suplovani()
+if __name__ == "__main__":
+    classScraper = ClassScraper()
+    classScraper.suplovani()
+    #classScraper.send_from_db(1508122325941445)

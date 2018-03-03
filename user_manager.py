@@ -1,7 +1,7 @@
 import sqlite3
 import time
 import botconfig
-import sender
+import tools
 import send_menu
 import os
 import hashlib
@@ -48,7 +48,7 @@ class UserManager():
         self.c.execute("DELETE FROM class_notify WHERE userid=?", [user_id])
         c = []
         for cl in classes:
-            c.append((user_id, cl))
+            c.append((user_id, tools.get_class_from_str(cl)))
         self.c.executemany("INSERT INTO class_notify(userid, room) VALUES (?,?)", c)
         self.db.commit()
 
