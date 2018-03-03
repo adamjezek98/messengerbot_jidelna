@@ -27,6 +27,7 @@ def hello():
 
 
 @app.route("/login")
+@app.route("/login/")
 def login():
     arg = request.args
     print(arg)
@@ -38,6 +39,7 @@ def login():
 
 
 @app.route("/logout")
+@app.route("/logout/")
 def logout():
     session.clear()
     return redirect("/")
