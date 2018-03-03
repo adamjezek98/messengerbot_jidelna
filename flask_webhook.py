@@ -113,10 +113,13 @@ def process_webhook():
         print("==========processing DONE===============")
         return "ok"
     elif request.method == "GET":
-        print(str(request.args))
-        return request.args['hub.challenge']
+        try:
+            return request.args['hub.challenge']
+        except:
+            return "ok"
 
 
 if __name__ == "__main__":
     app.secret_key = botconfig.secret_word
     app.run(host="0.0.0.0", port=5020)
+    app.url_map.strict_slashes = False
