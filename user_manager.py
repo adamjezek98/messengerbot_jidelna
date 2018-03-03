@@ -65,7 +65,7 @@ class UserManager():
         return False
 
 
-um = UserManager()
+#um = UserManager()
 
-um.get_user_foodtime("1508122325941445")
-um.get_user_foodtime("testuser")
+#um.get_user_foodtime("1508122325941445")
+#um.get_user_foodtime("testuser")
