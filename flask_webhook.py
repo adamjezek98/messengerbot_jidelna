@@ -74,6 +74,7 @@ def class_settings():
 
 
 @app.route("/webhook", methods=['GET', 'POST'])
+@app.route("/webhook/", methods=['GET', 'POST'])
 # @app.route("/webhook/", methods=['GET', 'POST'])
 def process_webhook():
     if request.method == "POST":
@@ -81,7 +82,7 @@ def process_webhook():
 
         print(datetime.datetime.now().strftime("%d. %m. %Y  %H:%M:%S"))
         print(request.path)
-        data_string = request.data
+        data_string = str(request.data, "utf8")
         print(data_string)
 
         j = json.loads(data_string)
@@ -110,7 +111,8 @@ def process_webhook():
         print("==========processing DONE===============")
         return "ok"
     elif request.method == "GET":
-        return "NO humans please"
+        print(str(request.args))
+        return request.args['hub.challenge']
 
 
 if __name__ == "__main__":
