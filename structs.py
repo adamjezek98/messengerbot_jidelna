@@ -14,6 +14,7 @@ class SuplStruct():
     teacher = None
     oldteacher = None
     date = None
+    onlyText = None
 
     def __str__(self):
         s = "Třída " + tools.get_class_str(self.classroom)
@@ -28,6 +29,8 @@ class SuplStruct():
         return s
 
     def get_short_str(self):
+        if self.onlyText != None:
+            return  self.onlyText
         s = self.hour + ". hodinu "
         if self.group is not None:
             s += "skupina " + self.group

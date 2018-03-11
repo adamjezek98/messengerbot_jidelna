@@ -29,6 +29,8 @@ class ClassScraper():
 
             root = ET.fromstring(oneday)
             day = root.findall('.//p[@class="textlarge_3"]')
+            if len(day) == 0:
+                continue
             date = day[0].text.split(" ")[1]
 
             rozvrhTrid = root.xpath('.//table[contains(.,"Změny v rozvrzích tříd")]')[0]
@@ -50,16 +52,22 @@ class ClassScraper():
                     classStruct.suplStructs = []
                     classStruct.classroom = classroom
                     classStruct.date = datetime.strptime(date, "%d.%m.%Y")
+                print(newclassroom)
+                if len(nodes) == 8:
+                    supl.classroom = classroom
+                    supl.hour = str(self.get_td_p_or_none(nodes[1])).replace(".hod", "")
+                    supl.subj = self.get_td_p_or_none(nodes[2])
+                    supl.group = self.get_td_p_or_none(nodes[3])
+                    supl.room = self.get_td_p_or_none(nodes[4])
+                    supl.type = self.get_td_p_or_none(nodes[5])
+                    supl.teacher = self.get_td_p_or_none(nodes[6])
+                    supl.oldteacher = self.get_td_p_or_none(nodes[7])
+                    supl.date = datetime.strptime(date, "%d.%m.%Y")
+                else: #pravddepobobne mimoradka
+                    supl.onlyText = ""
+                    for node in nodes:
+                        supl.onlyText += self.get_td_p_or_none(node)
 
-                supl.classroom = classroom
-                supl.hour = str(self.get_td_p_or_none(nodes[1])).replace(".hod", "")
-                supl.subj = self.get_td_p_or_none(nodes[2])
-                supl.group = self.get_td_p_or_none(nodes[3])
-                supl.room = self.get_td_p_or_none(nodes[4])
-                supl.type = self.get_td_p_or_none(nodes[5])
-                supl.teacher = self.get_td_p_or_none(nodes[6])
-                supl.oldteacher = self.get_td_p_or_none(nodes[7])
-                supl.date = datetime.strptime(date, "%d.%m.%Y")
                 is_new = supl.save_self_to_db_is_new()
                 if is_new:
                     classStruct.has_new = True
@@ -90,8 +98,8 @@ class ClassScraper():
         text = ""
         for r in self.c.fetchall():
             classroom = r[0]
-            self.c.execute("SELECT shortStr, day FROM suplstructs WHERE (classroom=? AND day >= JULIANDAY('now'))",
-                           [classroom])
+            self.c.execute("SELECT shortStr, day FROM suplstructs WHERE (classroom=? AND day >= ?)",
+                           [classroom, datetime.now()])
 
             olddate = None
             for row in self.c.fetchall():

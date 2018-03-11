@@ -20,10 +20,8 @@ class MessageProcessor():
     def send_welcome(self, user_id):
         sender.send(sender.get_message_button_template(user_id,
                                                        "Ahoj!\nJsem bot, který by ti měl pomoct nepřehlédnout nic "
-                                                       "důležitého. Umím ti říct, co bude k obědu, nebo tě upozornit "
-                                                       "na suplování.\nBuď ti můžu rovnou ukázat jídelníček, nebo si "
-                                                       "nastav pár věcí a můžu ti jej pravidelně zasílat, nebo tě "
-                                                       "upozorňovat na suplování.",
+                                                       "důležitého. Kromě původního zasílání objedů nyní umím i "
+                                                       "upozorňovat na suplování. Stačí si jenom nastavit třídu.",
                                                        (sender.get_postback_button("Ukaž jídelníček", "SENDCURRENT"),
                                                         sender.get_link_button("Nastavení",
                                                                                self.get_login_url(user_id)))))

@@ -5,6 +5,7 @@ import tools
 import send_menu
 import os
 import hashlib
+import requests
 
 os.chdir(botconfig.home_folder)
 
@@ -64,8 +65,10 @@ class UserManager():
         # print(user_id, "login nok, expected",orig_token,"got",token)
         return False
 
+    def get_user_profile_info(self, user_id):
 
-#um = UserManager()
+        r = requests.get("https://graph.facebook.com/v2.6/" + str(user_id)
+                         + "?fields=first_name,last_name,profile_pic&access_token=" + botconfig.messenger_access_token)
+        r.encoding = "utf8"
+        return r.text
 
-#um.get_user_foodtime("1508122325941445")
-#um.get_user_foodtime("testuser")
