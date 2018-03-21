@@ -1,5 +1,5 @@
 import urllib.request
-from datetime import datetime
+from datetime import datetime, timedelta
 import lxml.html as ET
 import sqlite3
 import botconfig
@@ -99,7 +99,7 @@ class ClassScraper():
         for r in self.c.fetchall():
             classroom = r[0]
             self.c.execute("SELECT shortStr, day FROM suplstructs WHERE (classroom=? AND day >= ?)",
-                           [classroom, datetime.now()])
+                           [classroom, datetime.now()-timedelta(days=1)])
 
             olddate = None
             for row in self.c.fetchall():
