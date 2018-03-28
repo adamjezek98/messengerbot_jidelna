@@ -65,6 +65,9 @@ class MessageProcessor():
                     ("Nemusíš mi děkovat brouku :* <3", "Nemáš zač ;)", ":)", "No sem úžasnej, žejo?", "dik more"))
                 sender.send_message(sender_id, dik)
                 return
+            elif message_text.lower().startswith("ne"):
+                sender.send_message(sender_id, random.choice(("Když nic nepotřebuješ tak nepiš!","Co tim jako myslíš že ne?")))
+                return
 
 
             else:  # klasická "Potřebuješ něco?"
