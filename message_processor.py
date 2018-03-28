@@ -42,6 +42,7 @@ class MessageProcessor():
             message_text = message["message"]["text"]
         except:
             message_text = ""
+            # další vůl posílá obrázky
             if self.reply_image(sender_id, message):
                 return
         print(message_text, sender_id)
